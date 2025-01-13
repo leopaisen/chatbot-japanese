@@ -1,0 +1,61 @@
+Verb Conjugation Basics
+ます形 (ますけい, Masu form): The polite form of verbs.
+て形 (てけい, Te form): Used to connect clauses or for requests.
+た形 (たけい, Ta form): The past tense form.
+ない形 (ないけい, Nai form): The negative form.
+Sentence Endings
+です (Desu): Polite ending for non-verbal sentences.
+ですか (Desu ka): Polite question ending.
+でしょう (Deshou): Expressing probability or asking for confirmation (polite).
+ですね (Desu ne): Seeking agreement or confirmation.
+Particles
+は (Wa): Topic marker.
+が (Ga): Subject marker.
+を (O): Direct object marker.
+に (Ni): Indicates direction, time, or indirect object.
+へ (E): Indicates direction.
+で (De): Indicates the location of an action or means.
+から (Kara): Starting point (from).
+まで (Made): Ending point (until).
+と (To): Used to connect nouns (and), with.
+や (Ya): Used to list multiple items (and so on).
+の (No): Possessive particle (of).
+も (Mo): Also, too.
+ね (Ne): Seeks agreement (isn't it?).
+よ (Yo): Emphasizing information (you know).
+Basic Grammar Structures
+です (Desu): Polite ending for nouns and adjectives.
+じゃありません (Ja arimasen): Negative form of "desu."
+でした (Deshita): Past form of "desu."
+じゃありませんでした (Ja arimasen deshita): Past negative form of "desu."
+Verbs and Adjectives
+い-Adjectives: Adjectives ending in い (e.g., あつい, atsui - hot).
+な-Adjectives: Adjectives followed by な before a noun (e.g., きれいな, kirei na - beautiful).
+い-adjective conjugation: Present affirmative (あついです), present negative (あつくないです), past affirmative (あつかったです), past negative (あつくなかったです).
+な-adjective conjugation: Present affirmative (きれいです), present negative (きれいじゃありません), past affirmative (きれいでした), past negative (きれいじゃありませんでした).
+Requests and Commands
+てください (Te kudasai): Please do.
+ないでください (Naide kudasai): Please don't do.
+ましょう (Mashou): Let's do.
+ましょうか (Mashou ka): Shall we do?
+Describing
+あります (Arimasu) / います (Imasu): There is/are (inanimate/animate).
+が好きです (Ga suki desu): Like something.
+がきらいです (Ga kirai desu): Dislike something.
+がほしいです (Ga hoshii desu): Want something.
+Time and Frequency
+とき (Toki): When.
+前に (Mae ni): Before.
+あとで (Ato de): After.
+から (Kara): Since, from.
+まで (Made): Until.
+もう (Mou): Already.
+まだ (Mada): Still, yet.
+Comparisons
+より (Yori): More than.
+のほうが (No hou ga): More, prefer.
+Additional Structures
+から (Kara) and ので (Node): Because, since.
+と (To): If, when (conditional).
+けど (Kedo): But, although.
+でも (Demo): But, however.
