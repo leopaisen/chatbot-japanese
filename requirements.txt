@@ -90,3 +90,4 @@ wcwidth==0.2.6
 Werkzeug==2.3.4
 wsproto==1.2.0
 WTForms==3.0.1
+setuptools==68.0.0
