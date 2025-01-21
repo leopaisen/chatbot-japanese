@@ -36,27 +36,12 @@ def index():
 
 system_prompt = """
 あなたは日本語の会話をサポートするチャットボットです。日常会話を練習するために、親しい感じで話してください。以下の点に注意してください：
-
-1. 敬語とタメ口の両方で話せるようにしてください。ユーザーがどちらを好むか確認してください。
+1. 必ず敬語で話してください。
 2. 日常会話によく使われる自然な表現を使ってください。
 3. 会話はリラックスしたトーンで、友好的に行ってください。
 4. 質問を投げかけて、会話を続けるようにしてください。
 """
 
-grammar_system_prompt = """
-あなたは日本語文法チェックボットです。以下の文章の文法を確認し、必要な訂正をしてください。
-"""
-
-explanation_prompt = """
-あなたは日本語教育をサポートする教師です。以下の文章について、日本語学習者が理解しやすいように、次のフォーマットで詳細な説明をしてください。
-
-1. **全文翻訳** (Full Sentence Translation): 文全体の意味を簡単に英語に訳してください。
-2. **単語ごとの意味** (Word-by-Word Explanation): 重要な単語を分解し、それぞれの意味と役割を日本語と英語で説明してください。
-3. **文法と構造の説明** (Grammar and Structure Explanation): 文章の文法構造（例えば、助詞の使い方、動詞の活用、句の接続など）を具体的に日本語と英語で説明してください。
-4. **追加の例文** (Additional Example Sentences): 同じ文法や構造を使った簡単な例文を1～2個提供し、それらを英語に訳してください。
-
-以下の文章について説明してください：
-"""
 
 
 # Before request, clear chat history if it's a new session (browser refresh)
@@ -78,16 +63,80 @@ def check_grammar():
         app.logger.error("No text provided")
         return jsonify({"error": "Text not provided"}), 400
 
+    # Prompt untuk sistem
+    grammar_system_prompt = """
+    Anda adalah seorang guru bahasa Jepang yang membantu pengguna memperbaiki kalimat. 
+    Berikan koreksi yang singkat dan jelas untuk setiap kesalahan tata bahasa atau pilihan kata dalam kalimat. 
+    Jika tidak ada kesalahan, berikan pujian sederhana.
+
+    Format jawaban:
+    Saran koreksi: [kalimat yang sudah diperbaiki]
+    Penjelasan: [jelaskan alasan koreksi dengan singkat]
+    Contoh tambahan: [berikan contoh serupa untuk memudahkan pemahaman]
+    """
+
+    # Konten untuk permintaan model
+    user_prompt = f"""
+    Kalimat yang perlu dikoreksi:
+    {text}
+    """
+
     try:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": grammar_system_prompt},
-                {"role": "user", "content": text},
+                {"role": "user", "content": user_prompt},
             ]
         )
-        generated_response = response.choices[0].message.content
+        generated_response = response.choices[0].message.content.strip()
+        app.logger.debug(f"Grammar check response: {generated_response}")
         return jsonify({"correctedText": generated_response})
+    except Exception as e:
+        app.logger.error(f"Error processing text: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
+
+
+#endpoint untuk tombol ngecek
+@app.route('/explain_output', methods=['POST'])
+def explain_output():
+    text = request.json.get("text")
+    app.logger.debug(f"Received text for output explanation: {text}")
+
+    if not text:
+        app.logger.error("No text provided")
+        return jsonify({"error": "Text not provided"}), 400
+
+    # Prompt untuk sistem
+    explanation_system_prompt = """
+    Anda adalah seorang guru bahasa Jepang yang menjelaskan rincian kalimat kepada pengguna. 
+    Berikan penjelasan dalam format berikut:
+    
+    1. Yomikata: [yomikata atau cara membaca dari setiap kata dalam kalimat dengan romaji]
+    2. Tata Bahasa: [jelaskan struktur tata bahasa yang digunakan dalam kalimat]
+    3. Arti: [artikan kata perkata dan secara keseluruhan dalam Bahasa Indonesia]
+    
+    Pastikan penjelasan singkat, padat, dan mudah dipahami oleh pengguna yang sedang belajar bahasa Jepang.
+    """
+
+    # Konten untuk permintaan model
+    user_prompt = f"""
+    Kalimat yang perlu dijelaskan:
+    {text}
+    """
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": explanation_system_prompt},
+                {"role": "user", "content": user_prompt},
+            ]
+            
+        )
+        generated_response = response.choices[0].message.content.strip()
+        app.logger.debug(f"Output explanation response: {generated_response}")
+        return jsonify({"explanation": generated_response})
     except Exception as e:
         app.logger.error(f"Error processing text: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
@@ -116,7 +165,8 @@ def chat():
         # Call OpenAI API with conversation history
         response = client.chat.completions.create(
             model=model,
-            messages=[{"role": "system", "content": system_prompt}] + messages
+            messages=[{"role": "system", "content": system_prompt}] + messages,
+            max_tokens=45  # Batasi respons hingga 60 token
         )
         generated_response = response.choices[0].message.content
 
@@ -140,7 +190,7 @@ def teachme():
         return jsonify({"error": "Question not provided"}), 400
 
     try:
-        response = client.chat.completions.create(
+        response = client.chat.compl/etions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "あなたは日本語教育チャットボットです。以下の質問に答えてください。"},
@@ -163,30 +213,4 @@ def clear_chat():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-#endpoint untuk tombol ngecek
-@app.route('/explain_output', methods=['POST'])
-def explain_output():
-    """
-    Mengambil output dari GPT dan memberikan penjelasan rinci
-    """
-    app.logger.debug(f"Received text for grammar check: {text}")
-    # Ambil output (text) dari request
-    text = request.json.get("text")
-    if not text:
-        return jsonify({"error": "Text not provided"}), 400
-
-    try:
-        # Kirim ke OpenAI untuk mendapatkan penjelasan
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": explanation_prompt},
-                {"role": "user", "content": text}
-            ]
-        )
-        explanation = response.choices[0].message.content
-        return jsonify({"explanation": explanation})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 

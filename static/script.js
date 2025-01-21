@@ -185,19 +185,19 @@ async function checkChatGrammar(text) {
         const data = await response.json();
         if (data && data.correctedText) {
             if (data.correctedText === text) {
-                showCorrectSign();
+                displayGrammarCorrection('Teks Anda sudah benar!');
             } else {
-                hideCorrectSign();
-                displayGrammarCorrection(data.correctedText);
+                displayGrammarCorrection(`${data.correctedText}`);
             }
         } else {
-            hideCorrectSign();
+            displayGrammarCorrection('Tidak ada saran koreksi.');
         }
     } catch (error) {
         console.error('Error checking grammar:', error);
-        hideCorrectSign();
+        displayGrammarCorrection('Terjadi kesalahan saat memeriksa grammar.');
     }
 }
+
 
 function showCorrectSign() {
     const correctSign = document.getElementById('correct-sign');
@@ -216,12 +216,22 @@ function hideCorrectSign() {
 // Display grammar corrections
 function displayGrammarCorrection(message) {
     const correctionsBox = document.getElementById('grammar-corrections');
-    correctionsBox.innerHTML = '';
-    const messageElement = document.createElement('div');
-    messageElement.className = 'message user-message';
-    messageElement.textContent = message;
-    correctionsBox.appendChild(messageElement);
+    correctionsBox.innerHTML = ''; // Clear previous corrections
+
+    // Memisahkan pesan menjadi poin-poin berdasarkan newline (\n)
+    const lines = message.split('\n');
+
+    lines.forEach((line, index) => {
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message user-message';
+        messageElement.style.textAlign = 'left'; // Rata kiri
+        messageElement.style.marginBottom = '5px'; // Memberikan sedikit jarak antar poin
+        messageElement.textContent = `${index + 1}. ${line.trim()}`; // Menambahkan numerasi
+        correctionsBox.appendChild(messageElement);
+    });
 }
+
+
 
 // Function to explain last bot output
 async function explainLastBotOutput() {
@@ -232,23 +242,22 @@ async function explainLastBotOutput() {
     }
 
     try {
-        const response = await fetch('/api', {
+        const response = await fetch('/explain_output', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                message: lastBotResponse,
-                model: selectedModel
-            })
+            body: JSON.stringify({ text: lastBotResponse })
         });
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        if (data && data.response) {
-            displayExplanation(`<h5>アウトプットの説明</h5><p>${data.response}</p>`);
+        if (data && data.explanation) { // Gunakan data.explanation
+            displayExplanation(`<p>${data.explanation}</p>`);
         } else {
-            displayExplanation('<p style="color: red;">説明が生成されませんでした。</p>');
+            displayExplanation('<p style="color: red;">Penjelasan tidak dapat dihasilkan.</p>');
         }
+        
     } catch (error) {
         console.error('Error explaining the last output:', error);
         displayExplanation(`<p style="color: red;">エラー: ${error.message}</p>`);
@@ -257,9 +266,13 @@ async function explainLastBotOutput() {
 
 // Display explanation in grammar corrections box
 function displayExplanation(content) {
-    const grammarCorrections = document.getElementById('grammar-corrections');
-    grammarCorrections.innerHTML = content;
+    const explanationBox = document.getElementById('grammar-corrections');
+    explanationBox.innerHTML = `
+        <div class="message response-message">${content}</div>
+    `;
 }
+
+
 
 // Event listeners
 document.getElementById('voice-select').addEventListener('change', handleVoiceChange);
@@ -276,3 +289,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     loadPreviousConversation();
 });
+
+// Display output explanations
+function displayOutputExplanation(message) {
+    const explanationsBox = document.getElementById('output-explanations'); // Change this ID to your output check container's ID
+    explanationsBox.innerHTML = ''; // Clear previous explanations
+
+    // Split message into lines based on newline (\n)
+    const lines = message.split('\n');
+
+    lines.forEach((line, index) => {
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message response-message';
+        messageElement.style.textAlign = 'left'; // Align text to the left
+        messageElement.style.marginBottom = '5px'; // Add spacing between items
+        messageElement.style.backgroundColor = '#f8d7da'; // Set background color to light red
+        messageElement.style.color = '#000000'; // Set text color to black
+        messageElement.style.padding = '10px'; // Add padding for readability
+        messageElement.style.borderRadius = '5px'; // Add slight rounding to edges
+        messageElement.textContent = `${index + 1}. ${line.trim()}`; // Add numbering
+        explanationsBox.appendChild(messageElement);
+    });
+}
+
+

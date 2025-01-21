@@ -79,3 +79,26 @@
         font-size: 12px;
     }
 }
+
+/* Styling for grammar correction box */
+#grammar-corrections {
+    text-align: left; /* Ratakan teks ke kiri */
+    font-family: Arial, sans-serif;
+    line-height: 1.6; /* Memberikan jarak antar baris */
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    white-space: pre-line; /* Memastikan format newline dipertahankan */
+}
+
+.message.response-message {
+    background-color: #ffcccc; /* Warna merah muda */
+    color: #000000; /* Warna teks hitam */
+    border-radius: 5px; /* Sudut sedikit melengkung */
+    padding: 10px; /* Jarak dalam elemen */
+    margin-bottom: 10px; /* Jarak antar elemen */
+    line-height: 1.5; /* Spasi antar baris teks */
+}
+

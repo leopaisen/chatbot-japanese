@@ -14,9 +14,6 @@
         <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#chatbot">チャットボット</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#teachme">日本語先生</a>
-        </li>
     </ul>
     
     <div class="tab-content">
@@ -63,21 +60,6 @@
                     <option value="ft:gpt-3.5-turbo-0125:personal:chatbot-tameguchi:9h91UVHL">タメ口</option>
                     <option value="ft:gpt-3.5-turbo-0125:personal:japanese-chatbot-terrace:ARAneXfD">パーソナライズモデル (Terrace)</option>
                 </select>
-            </div>
-        </div>
-
-        <!-- TeachMe Tab -->
-        <div id="teachme" class="tab-pane fade">
-            <div class="mt-3">
-                <input type="text" id="teachme-input" class="form-control" placeholder="質問を入力してください">
-                <label for="language-select">言語: </label>
-                <select id="language-select" class="form-control">
-                    <option value="ja">日本語</option>
-                    <option value="en">English</option>
-                    <option value="id">Indonesia</option>
-                </select>
-                <button class="btn btn-primary mt-2" type="button" onclick="askQuestion()">送信</button>
-                <div id="teachme-response" class="mt-3"></div>
             </div>
         </div>
 
