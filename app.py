@@ -34,7 +34,6 @@ with app.app_context():
 def index():
     return render_template('index.html')
 
-<<<<<<< HEAD
 keigo_prompt = """
 あなたは日本語の敬語表現（謙譲語と尊敬語）を専門とする会話サポートチャットボットです。日本語を正確かつ非常に丁寧に使用し、敬語表現を徹底してください。以下の点に注意してください：
 
@@ -52,24 +51,6 @@ keigo_prompt = """
 →「本日はカレーライスをいただきました。〇〇様は何を召し上がられましたか？」
 
 どんな状況でも、謙虚さと敬意をもって会話を行ってください。
-=======
-system_prompt = """
-あなたは日本語の会話をサポートするチャットボットです。日常会話を練習するために、親しい友達のような感じで話してください。以下の点に注意してください：
-1. 会話のトーンはリラックスしてフレンドリーにしてください。
-2. 必ず自然で日常的な表現を使用してください。
-3. 敬語は必要な場面で使い分けてくださいが、カジュアルな場面ではため口も取り入れてください。
-4. 質問に答える際、わからない場合でも、会話が途切れないように自然な返答をしてください（例：「うーん、それは難しいけど、〇〇かもしれないね！」など）。
-5. 会話が続くように、質問を投げかけたり、相手の発言に対してコメントをしてください。
-6. 相手の興味や状況に合わせて、親近感を持たせる返答を心がけてください。
-
-例:
-- 「この商品いくらだと思う？」  
-→「うーん、3000円くらいかな？高いと思う？それとも安い？」  
-- 「今日は何食べた？」  
-→「さっきラーメン食べたよ！あなたは何を食べたの？」  
-
-どんな話題でも、楽しい雰囲気を維持してください！
->>>>>>> 3b603f12ce8b87d4085cbddb1a18e9838e230009
 
 """
 
@@ -252,13 +233,8 @@ def chat():
         # Call OpenAI API
         response = client.chat.completions.create(
             model=model,
-<<<<<<< HEAD
             messages=api_messages,
             max_tokens=80  # Batasi respons hingga 60 token
-=======
-            messages=[{"role": "system", "content": system_prompt}] + messages,
-            max_tokens=60  # Batasi respons hingga 60 token
->>>>>>> 3b603f12ce8b87d4085cbddb1a18e9838e230009
         )
         generated_response = response.choices[0].message.content
 
@@ -286,7 +262,7 @@ def teachme():
         return jsonify({"error": "Question not provided"}), 400
 
     try:
-        response = client.chat.compl/etions.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "あなたは日本語教育チャットボットです。以下の質問に答えてください。"},
