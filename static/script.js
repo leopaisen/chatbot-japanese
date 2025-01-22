@@ -105,9 +105,15 @@ function speakMessage(message) {
 async function sendMessage() {
     const messageInput = document.getElementById('message-input');
     const messageText = messageInput.value.trim();
+    
     if (messageText === '') return;
 
-    lastUserMessage = messageText;
+    lastUserMessage = messageText; // Memperbarui lastUserMessage
+    console.log('lastUserMessage:', lastUserMessage);
+
+    const modelSelect = document.getElementById('model-select');
+    const selectedModel = modelSelect.value;
+    const promptType = modelSelect.options[modelSelect.selectedIndex].dataset.prompt; // Ambil promptType
 
     displayMessage(messageText, 'user-message');
 
@@ -117,28 +123,27 @@ async function sendMessage() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ message: messageText, model: selectedModel })
+            body: JSON.stringify({ message: messageText, model: selectedModel, promptType: promptType })
         });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         if (data && data.response) {
-            lastBotResponse = data.response; // Store the last bot response
+            lastBotResponse = data.response; // Pastikan ini diperbarui
+            console.log('lastBotResponse:', lastBotResponse); // Debugging
             displayMessage(data.response, 'response-message');
             speakMessage(data.response);
         } else {
-            const errorMessage = 'No response from server';
-            displayMessage(errorMessage, 'response-message');
-            speakMessage(errorMessage);
+            displayMessage('No response from server', 'response-message');
         }
     } catch (error) {
-        const errorMessage = 'Error: ' + error.message;
-        displayMessage(errorMessage, 'response-message');
-        speakMessage(errorMessage);
+        displayMessage('Error: ' + error.message, 'response-message');
     }
     messageInput.value = '';
 }
+
+
 
 // Clear chat history
 async function clearChat() {
