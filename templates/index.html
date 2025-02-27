@@ -9,7 +9,7 @@
 </head>
 <body>
 <div class="container mt-3">
-    <!-- Tabs for switching between Chatbot, TeachMe, and Grammar Check -->
+    <!-- チャットボット、TeachMe、文法チェックのタブ切り替え -->
     <ul class="nav nav-tabs">
         <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#chatbot">チャットボット</a>
@@ -17,10 +17,10 @@
     </ul>
     
     <div class="tab-content">
-        <!-- Chatbot Tab -->
+        <!-- チャットボットのタブ -->
         <div id="chatbot" class="tab-pane active">
             <div class="row">
-                <!-- Chatbox and Input area -->
+                <!-- チャットボックスと入力エリア -->
                 <div class="col-md-6">
                     <div class="chat-container">
                         <div id="chat-box" class="mb-3" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;"></div>
@@ -36,19 +36,17 @@
                     </div>
                 </div>
 
-                <!-- Grammar correction area -->
+                <!-- 文法訂正エリア -->
                 <div class="col-md-6">
                     <div id="grammar-corrections" class="chat-container" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
                         <h5>文法訂正</h5>
                     </div>
                     <button class="btn btn-info mt-2" type="button" onclick="checkLastUserMessageGrammar()">インプットチェック</button>
-                     <!-- New Explanation Button -->
                     <button class="btn btn-warning mt-2" type="button" onclick="explainLastBotOutput()">アウトプットチェック</button>
-
                 </div>
             </div>
 
-            <!-- Dropdown for voice and model selection -->
+            <!-- 音声とモデルの選択ドロップダウン -->
             <div class="mt-3">
                 <label for="voice-select">音声: </label>
                 <select id="voice-select" class="form-control"></select>

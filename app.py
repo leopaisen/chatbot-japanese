@@ -7,26 +7,26 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Set up OpenAI client
-client = OpenAI(api_key="sk-proj-8EZWERjRb6ryH9PBB5NZT3BlbkFJt0NARXhox0anSHyfdVRJ")
+# OpenAI クライアントの設定
+client = OpenAI(api_key="OpenAIのAPIKEYをここに入力してください")
 
-# Configure logging
+# ロギングの設定
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Configure the secret key for session management and the database URI
+# セッション管理のための秘密鍵とデータベースURIの設定
 app.secret_key = os.getenv('SECRET_KEY', 'your_secret_key')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chat_history.db'
 db = SQLAlchemy(app)
 
-# Database model for storing conversation history
+# 会話履歴を保存するためのデータベースモデル
 class ChatHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    role = db.Column(db.String(10))  # Either 'user' or 'assistant'
-    content = db.Column(db.Text)  # Message content
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)  # Timestamp when message is added
+    role = db.Column(db.String(10)) 
+    content = db.Column(db.Text) 
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)  
 
-# Ensure that the database and tables are created
+# データベースとテーブルが作成されていることを確認する
 with app.app_context():
     db.create_all()
 
@@ -106,16 +106,16 @@ tameguchi_prompt = """
 """
 
 
-# Before request, clear chat history if it's a new session (browser refresh)
+# リクエスト前に、新しいセッション（ブラウザのリフレッシュ時）であればチャット履歴をクリアする
 @app.before_request
 def clear_chat_on_refresh():
     if 'chat_started' not in session:
-        # Clear chat history in the database
+        # 文法チェック用の単一のルート
         ChatHistory.query.delete()
         db.session.commit()
         session['chat_started'] = True
 
-# Single route for grammar checking
+# モデルへのリクエストのコンテンツ
 @app.route('/check_grammar', methods=['POST'])
 def check_grammar():
     text = request.json.get("text")
@@ -125,7 +125,7 @@ def check_grammar():
         app.logger.error("No text provided")
         return jsonify({"error": "Text not provided"}), 400
 
-    # Prompt untuk sistem
+    
     grammar_system_prompt = """
     Anda adalah seorang guru bahasa Jepang yang membantu pengguna memperbaiki kalimat. 
     Berikan koreksi yang singkat dan jelas untuk setiap kesalahan tata bahasa atau pilihan kata dalam kalimat. 
@@ -137,7 +137,6 @@ def check_grammar():
     Contoh tambahan: [berikan contoh serupa untuk memudahkan pemahaman]
     """
 
-    # Konten untuk permintaan model
     user_prompt = f"""
     Kalimat yang perlu dikoreksi:
     {text}
@@ -159,7 +158,7 @@ def check_grammar():
         return jsonify({"error": str(e)}), 500
 
 
-#endpoint untuk tombol ngecek
+# 文法チェックボタンのエンドポイント
 @app.route('/explain_output', methods=['POST'])
 def explain_output():
     text = request.json.get("text")
@@ -169,7 +168,7 @@ def explain_output():
         app.logger.error("No text provided")
         return jsonify({"error": "Text not provided"}), 400
 
-    # Prompt untuk sistem
+    
     explanation_system_prompt = """
     Anda adalah seorang guru bahasa Jepang yang menjelaskan rincian kalimat kepada pengguna. 
     Berikan penjelasan dalam format berikut:
@@ -181,7 +180,7 @@ def explain_output():
     Pastikan penjelasan singkat, padat, dan mudah dipahami oleh pengguna yang sedang belajar bahasa Jepang.
     """
 
-    # Konten untuk permintaan model
+  
     user_prompt = f"""
     Kalimat yang perlu dijelaskan:
     {text}
@@ -207,7 +206,7 @@ def explain_output():
 @app.route('/api', methods=['POST'])
 def chat():
     message = request.json.get("message")
-    model = request.json.get("model", "gpt-3.5-turbo")  # Model default
+    model = request.json.get("model", "gpt-3.5-turbo")  # デフォルトのモデル
     app.logger.debug(f"Received message: {message}")
     app.logger.debug(f"Using model: {model}")
 
@@ -216,22 +215,22 @@ def chat():
         return jsonify({"error": "Message not provided"}), 400
 
     try:
-        # Save the user message to the database
+        # ユーザーのメッセージをデータベースに保存
         new_message = ChatHistory(role='user', content=message)
         db.session.add(new_message)
         db.session.commit()
 
-        # Retrieve the last 10 messages from the chat history
+        # チャット履歴から最新の10件のメッセージを取得
         messages = ChatHistory.query.order_by(ChatHistory.timestamp.desc()).limit(10).all()
         messages = [{'role': msg.role, 'content': msg.content} for msg in reversed(messages)]
 
-        # Tentukan prompt berdasarkan model
+       # モデルに応じたプロンプトを設定
         if model == "ft:gpt-3.5-turbo-0125:personal:chatbot-tameguchi:9h91UVHL":
-            # Gunakan tameguchi_prompt untuk model tameguchi
+            # tameguchiモデルの場合、tameguchi_promptを使用
             api_messages = [{"role": "system", "content": tameguchi_prompt}] + messages
         elif model == "gpt-3.5-turbo":
-            # Pilih antara keigo atau formal berdasarkan dropdown
-            prompt_type = request.json.get("promptType", "keigo")  # Default ke keigo
+
+            prompt_type = request.json.get("promptType", "keigo") 
             if prompt_type == "formal":
                 system_prompt = formal_prompt
             else:
@@ -240,15 +239,15 @@ def chat():
         else:
             return jsonify({"error": "Invalid model selected"}), 400
 
-        # Call OpenAI API
+        # OpenAI APIを呼び出す
         response = client.chat.completions.create(
             model=model,
             messages=api_messages,
-            max_tokens=80  # Batasi respons hingga 60 token
+            max_tokens=80  # レスポンスを80トークン以内に制限
         )
         generated_response = response.choices[0].message.content
 
-        # Save the bot response to the database
+        # チャットボットのレスポンスをデータベースに保存
         new_response = ChatHistory(role='assistant', content=generated_response)
         db.session.add(new_response)
         db.session.commit()
@@ -288,7 +287,7 @@ def teachme():
 
 @app.route('/clear_chat', methods=['POST'])
 def clear_chat():
-    # Clear the chat history from the database
+    # データベースからチャット履歴をクリア
     ChatHistory.query.delete()
     db.session.commit()
     return jsonify({'status': 'Chat history cleared'})
